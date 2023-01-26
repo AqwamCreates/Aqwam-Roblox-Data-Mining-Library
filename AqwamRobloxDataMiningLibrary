@@ -1,0 +1,286 @@
+--[[
+
+	--------------------------------------------------------------------
+
+	Version 1.0
+
+	Aqwam's Roblox Data Mining Library (AR-DataML)
+
+	Author: Aqwam Harish Aiman
+	
+	YouTube: https://www.youtube.com/channel/UCUrwoxv5dufEmbGsxyEUPZw
+	
+	LinkedIn: https://www.linkedin.com/in/aqwam-harish-aiman/
+	
+	--------------------------------------------------------------------
+	
+	DO NOT SELL, RENT, DISTRIBUTE THIS LIBRARY
+	
+	DO NOT SELL, RENT, DISTRIBUTE MODIFIED VERSION OF THIS LIBRARY
+	
+	DO NOT CLAIM OWNERSHIP OF THIS LIBRARY
+	
+	GIVE CREDIT AND SOURCE WHEN USING THIS LIBRARY IF YOUR USAGE FALLS UNDER ONE OF THESE CATEGORIES:
+	
+		- USED AS A VIDEO OR ARTICLE CONTENT
+		- USED AS COMMERCIAL USE 
+	
+	--------------------------------------------------------------------
+
+--]]
+
+local AqwamRobloxDataMiningLibrary = {}
+
+local dataset = {}
+
+function AqwamRobloxDataMiningLibrary:disconnectAllTrackingConnections(trackingConnectionArray)
+	
+	for index, trackingConnection in ipairs(trackingConnectionArray) do
+		
+		trackingConnectionArray:Disconnect()
+		
+	end
+	
+end
+
+function AqwamRobloxDataMiningLibrary:collectVariableValueData(variablesArray)
+
+	local data = {}
+
+	for index, value in ipairs(variablesArray) do
+
+		table.insert(data, value)
+
+	end
+
+	return data
+
+end
+
+function AqwamRobloxDataMiningLibrary:collectInstanceValueData(InstancesArray)
+
+	local data = {}
+
+	for index, instance in ipairs(InstancesArray) do
+
+		table.insert(data, instance.Value)
+
+	end
+
+	return data
+
+end
+
+local function checkIfInstanceChanged(TrackedInstance, InstancesArray)
+	
+	local data
+	
+	TrackedInstance.Changed:Connect(function()
+		
+		data = AqwamRobloxDataMiningLibrary:collectInstanceValueData(InstancesArray)
+		
+		table.insert(dataset, data)
+		
+	end)
+	
+end
+
+function AqwamRobloxDataMiningLibrary:trackAllInstancesValueWhenChanged(InstancesArray)
+	
+	for index, instance in ipairs(InstancesArray) do
+		
+		checkIfInstanceChanged(instance, InstancesArray)
+		
+	end
+	
+	return dataset
+	
+end
+
+function AqwamRobloxDataMiningLibrary:trackAllInstancesValueWhenHeartbeat(InstancesArray)
+	
+	local data
+	
+	local trackingConnection = game:GetService("RunService").Heartbeat:Connect(function()
+		
+		data = AqwamRobloxDataMiningLibrary:collectInstanceValueData(InstancesArray)
+		
+		table.insert(dataset, data)
+		
+	end)
+	
+	return dataset, trackingConnection
+	
+end
+
+function AqwamRobloxDataMiningLibrary:trackAllInstancesValueWhenStepped(InstancesArray)
+
+	local data
+
+	local trackingConnection = game:GetService("RunService").Stepped:Connect(function()
+
+		data = AqwamRobloxDataMiningLibrary:collectInstanceValueData(InstancesArray)
+
+		table.insert(dataset, data)
+
+	end)
+
+	return dataset, trackingConnection
+
+end
+
+function AqwamRobloxDataMiningLibrary:trackAllInstancesValueWhenRenderStepped(InstancesArray)
+
+	local data
+
+	local trackingConnection = game:GetService("RunService").RenderStepped:Connect(function()
+
+		data = AqwamRobloxDataMiningLibrary:collectInstanceValueData(InstancesArray)
+
+		table.insert(dataset, data)
+
+	end)
+
+	return dataset, trackingConnection
+
+end
+
+function AqwamRobloxDataMiningLibrary:trackAllInstancesValueWithMultipleSettings(trackingSettingsArray, InstancesArray)
+	
+	local whenInstanceChanged = trackingSettingsArray.whenInstanceChanged
+	
+	local whenHeartbeat = trackingSettingsArray.whenHeartbeat
+	
+	local whenStepped = trackingSettingsArray.whenStepped
+	
+	local whenRenderStepped = trackingSettingsArray.whenRenderStepped
+	
+	local connectionArray = {}
+	
+	local connection
+	
+	if whenInstanceChanged then 
+		
+		connection = AqwamRobloxDataMiningLibrary:trackAllInstancesValueWhenChanged(InstancesArray)
+		
+		table.insert(connectionArray, connection)
+		
+	end
+	
+	if whenHeartbeat then 
+		
+		connection = AqwamRobloxDataMiningLibrary:trackAllInstancesValueWhenHeartbeat(InstancesArray)
+		
+		table.insert(connectionArray, connection)
+		
+	end
+	
+	if whenStepped then 
+		
+		connection = AqwamRobloxDataMiningLibrary:trackAllInstancesValueWhenStepped(InstancesArray)
+		
+		table.insert(connectionArray, connection)
+		
+	end
+	
+	if whenRenderStepped then 
+		
+		connection = AqwamRobloxDataMiningLibrary:trackAllInstancesValueWhenRenderStepped(InstancesArray)
+		
+		table.insert(connectionArray, connection)
+		
+	end
+	
+	return dataset, connectionArray
+	
+end
+
+function AqwamRobloxDataMiningLibrary:trackAllVariablesValueWhenHeartbeat(variablesArray)
+
+	local data
+
+	local trackingConnection = game:GetService("RunService").Heartbeat:Connect(function()
+
+		data = AqwamRobloxDataMiningLibrary:collectVariableValueData(variablesArray)
+
+		table.insert(dataset, data)
+
+	end)
+
+	return dataset, trackingConnection
+
+end
+
+function AqwamRobloxDataMiningLibrary:trackAllVariablesValueWhenStepped(variablesArray)
+
+	local data
+
+	local trackingConnection = game:GetService("RunService").Stepped:Connect(function()
+
+		data = AqwamRobloxDataMiningLibrary:collectVariableValueData(variablesArray)
+
+		table.insert(dataset, data)
+
+	end)
+
+	return dataset, trackingConnection
+
+end
+
+function AqwamRobloxDataMiningLibrary:trackAllValuesWhenRenderStepped(variablesArray)
+
+	local data
+
+	local trackingConnection = game:GetService("RunService").RenderStepped:Connect(function()
+
+		data = AqwamRobloxDataMiningLibrary:collectVariableValueData(variablesArray)
+
+		table.insert(dataset, data)
+
+	end)
+
+	return dataset, trackingConnection
+
+end
+
+function AqwamRobloxDataMiningLibrary:trackAllValuesWithMultipleSettings(trackingSettingsArray, variablesArray)
+
+	local whenHeartbeat = trackingSettingsArray.whenHeartbeat
+
+	local whenStepped = trackingSettingsArray.whenStepped
+
+	local whenRenderStepped = trackingSettingsArray.whenRenderStepped
+	
+	local connectionArray = {}
+
+	local connection
+
+	if whenHeartbeat then
+		
+		connection = AqwamRobloxDataMiningLibrary:trackAllValuesWhenHeartbeat(variablesArray)
+		
+		table.insert(connectionArray, connection)
+		
+	end
+
+	if whenStepped then 
+		
+		connection = AqwamRobloxDataMiningLibrary:trackAllValuesWhenStepped(variablesArray)
+		
+		table.insert(connectionArray, connection)
+		
+	end
+
+	if whenRenderStepped then 
+		
+		connection = AqwamRobloxDataMiningLibrary:trackAllValuesWhenRenderStepped(variablesArray)
+		
+		table.insert(connectionArray, connection)
+		
+	end
+
+	return dataset, connectionArray
+
+end
+
+return AqwamRobloxDataMiningLibrary
