@@ -147,7 +147,7 @@ end
 
 function AqwamRobloxDataMiningLibrary:trackAllInstancesValueWithMultipleSettings(trackingSettingsArray, InstancesArray)
 	
-	local whenInstanceChanged = trackingSettingsArray.whenInstanceChanged
+	local whenInstanceValueChanged = trackingSettingsArray.whenInstanceValueChanged
 	
 	local whenHeartbeat = trackingSettingsArray.whenHeartbeat
 	
