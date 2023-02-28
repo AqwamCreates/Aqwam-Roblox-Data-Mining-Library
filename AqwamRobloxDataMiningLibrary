@@ -73,7 +73,7 @@ end
 
 local function checkIfInstanceChanged(TrackedInstance, InstancesArray)
 	
-	local data
+	local dataset = {}
 	
 	TrackedInstance.Changed:Connect(function()
 		
